@@ -53,3 +53,7 @@ button:disabled{cursor:default;opacity:.45}
 @media(max-width:700px){.temple-tools{top:91px;left:12px;right:12px;width:max-content;max-width:calc(100% - 24px);padding:4px;gap:1px}.temple-tools button{font-size:10px;padding:8px 9px;gap:5px}.hall-notice{top:145px;font-size:10px}.seats-panel{top:140px;right:12px;width:min(310px,calc(100% - 24px));max-height:calc(100svh - 255px);overflow:auto}.people-panel{top:140px}.meditation-card{bottom:124px}}
 @media(max-height:520px){.temple-tools{top:77px}.hall-notice{top:125px}.seats-panel,.people-panel{top:115px;max-height:calc(100svh - 160px);overflow:auto}}
 .world-viewport{z-index:0}
+.entrance{min-height:100svh;display:grid;place-items:center;padding:24px;background:radial-gradient(ellipse at top,#66583c,#2b2821 75%)}
+.entrance-card{box-shadow:0 24px 80px #0005}
+.entrance-card h1{font-family:Georgia,serif;font-size:28px;line-height:1.3;margin:12px 0}
+.entrance-card .dialog-actions button{width:100%}

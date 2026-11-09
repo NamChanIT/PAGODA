@@ -27,8 +27,35 @@ const actions = [
   { value: 'stand', Icon: Footprints, label: 'Đứng dậy' },
 ] as const;
 
-function App() {
-  const [name, setName] = useState(() => read('chua3d.displayName', 'Khách an yên').trim().slice(0, 24) || 'Khách an yên');
+function Entrance() {
+  const [enteredName, setEnteredName] = useState<string | null>(null);
+  const [draft, setDraft] = useState(() => read('chua3d.displayName', '').trim().slice(0, 24));
+  const [error, setError] = useState('');
+  if (enteredName !== null) return <App initialName={enteredName}/>;
+  return <main className="entrance">
+    <section className="settings-dialog entrance-card" aria-labelledby="entrance-title">
+      <form onSubmit={event => {
+        event.preventDefault();
+        const nextName = draft.trim();
+        if (!nextName) { setError('Bạn hãy nhập tên trước khi vào chùa.'); return; }
+        save('chua3d.displayName', nextName); setEnteredName(nextName);
+      }}>
+        <span className="eyebrow">CHÙA AN YÊN</span>
+        <h1 id="entrance-title">Chào bạn đến với An Yên</h1>
+        <p>Hãy đặt tên để mọi người trong phòng nhận ra bạn.</p>
+        <label htmlFor="entrance-name">Tên hiển thị</label>
+        <input id="entrance-name" name="name" autoFocus required maxLength={24} autoComplete="nickname"
+          placeholder="Nhập tên của bạn" value={draft} aria-invalid={!!error} aria-describedby="entrance-help"
+          onChange={event => { setDraft(event.target.value); setError(''); }}/>
+        <p id="entrance-help" role={error ? 'alert' : undefined}>{error || 'Tối đa 24 ký tự. Tên sẽ hiển thị với người cùng phòng.'}</p>
+        <div className="dialog-actions"><button type="submit">Vào chùa</button></div>
+      </form>
+    </section>
+  </main>;
+}
+
+function App({ initialName }: { initialName: string }) {
+  const [name, setName] = useState(initialName);
   const [room, setRoom] = useState(roomFromURL);
   const [ritual, setRitual] = useState<Ritual>('stand');
   const [direction, setDirection] = useState('');
@@ -216,4 +243,4 @@ function App() {
   </main>;
 }
 
-createRoot(document.getElementById('root')!).render(<React.StrictMode><App/></React.StrictMode>);
+createRoot(document.getElementById('root')!).render(<React.StrictMode><Entrance/></React.StrictMode>);
