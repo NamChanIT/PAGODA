@@ -4,19 +4,20 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { layout } from './types';
 import { Altar } from './Altar';
+import { DonationBox } from './DonationBox';
 import { Hall } from './Hall';
 import { Character } from './Character';
 import type { Correction, Player, Ritual, Seat } from './types';
 
 type Props = {
-  incense: boolean; onBell: () => void; onIncense: () => void;
+  incense: boolean; onBell: () => void; onIncense: () => void; onDonation: () => void;
   name: string; ritual: Ritual; setRitual: (ritual: Ritual) => void;
   peers: Player[]; self: string; latest: MutableRefObject<Player | null>;
   correction: MutableRefObject<Correction | null>;
   direction: string; paused: boolean; cameraAngle: number; zoom: number;
   seat: Seat | null; onSeat: (seat: Seat) => void; onRelease: () => void;
 };
-export function World({ incense, onBell, onIncense, name, ritual, setRitual, peers, self, latest, correction, direction, paused, cameraAngle, zoom, seat, onSeat, onRelease }: Props) {
+export function World({ incense, onBell, onIncense, onDonation, name, ritual, setRitual, peers, self, latest, correction, direction, paused, cameraAngle, zoom, seat, onSeat, onRelease }: Props) {
   const player = useRef<Player>({ id: 'local', name, x: 0, z: layout.spawn.centerZ, yaw: Math.PI, ritual });
   const keys = useRef(new Set<string>());
   const cameraPosition = useRef(new THREE.Vector3());
@@ -82,6 +83,7 @@ export function World({ incense, onBell, onIncense, name, ritual, setRitual, pee
     camera.lookAt(p.x - Math.sin(cameraAngle) * 1.3, 1.65, p.z - Math.cos(cameraAngle) * 1.3);
   });
   return <>
+    <DonationBox onOpen={() => { if (!paused) onDonation(); }}/>
     <Altar incense={incense} onBell={() => { if (!paused) onBell(); }} onIncense={() => { if (!paused) onIncense(); }}/>
     <Hall occupied={peers.filter(p => p.id !== self).map(p => p.seatId).filter((id): id is number => typeof id === 'number')}
       selected={seat?.id ?? null} onSeat={chosen => { if (!paused) onSeat(chosen); }}/>

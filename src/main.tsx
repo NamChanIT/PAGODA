@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { Canvas } from '@react-three/fiber';
 import { Users, Volume2, VolumeX, RotateCcw, Settings, Share2, Maximize, Minimize, Footprints, Hand, CircleDot, Armchair, Bell, Flame, Grid2X2 } from 'lucide-react';
 import { World } from './world/World';
+import { DonationDialog } from './DonationDialog';
 import { useRoom } from './world/network';
 import { useAmbientAudio } from './world/assets';
 import { seats, layout } from './world/types';
@@ -62,6 +63,8 @@ function App({ initialName }: { initialName: string }) {
   const [angle, setAngle] = useState(0); const [zoom, setZoom] = useState(layout.camera.zoom);
   const [seat, setSeat] = useState<Seat | null>(null);
   const [settings, setSettings] = useState(false); const [people, setPeople] = useState(false);
+  const [donation, setDonation] = useState(false);
+  const openDonation = () => { setDirection(''); setDonation(true); };
   const [audio, setAudio] = useState(false);
   const [showSeats, setShowSeats] = useState(false);
   const [bellBusy, setBellBusy] = useState(false);
@@ -154,9 +157,9 @@ function App({ initialName }: { initialName: string }) {
       onWheel={event => setZoom(value => Math.max(3, Math.min(8, value + event.deltaY * .004)))}>
       <Boundary><Canvas shadows={quality !== 'low'} dpr={quality === 'low' ? 1 : [1, 1.5]}
         camera={{ position: [0, 3.58, 17], fov: 66 }} fallback={<div className="fallback">Trình duyệt cần hỗ trợ WebGL.</div>}>
-        <World incense={network.incense} onBell={ringBell} onIncense={toggleIncense} name={name} ritual={ritual} setRitual={setRitual} peers={network.players} self={network.self.current}
+        <World incense={network.incense} onBell={ringBell} onIncense={toggleIncense} onDonation={openDonation} name={name} ritual={ritual} setRitual={setRitual} peers={network.players} self={network.self.current}
           latest={network.latest} correction={network.correction} direction={direction}
-          paused={settings || meditation.active} cameraAngle={angle} zoom={zoom} seat={seat}
+          paused={settings || donation || meditation.active} cameraAngle={angle} zoom={zoom} seat={seat}
           onSeat={chooseSeat} onRelease={releaseSeat}/>
       </Canvas></Boundary>
     </div>
@@ -197,6 +200,7 @@ function App({ initialName }: { initialName: string }) {
     {notice && <div className="hall-notice glass" role="status">{notice}</div>}
     <aside className="hall-guide"><span>KHÔNG GIAN TĨNH TÂM</span><h1>Trở về với<br/>bình yên.</h1><p>Chọn một đệm để ngồi xuống.<br/>W A S D / ↑ ↓ ← → để di chuyển.<br/>Kéo để xoay · Cuộn để thu phóng.</p></aside>
     <div className="temple-tools glass" aria-label="Tương tác chính điện">
+      <button aria-label="Mở hòm công đức" onClick={openDonation}><Hand size={17}/><span>Công đức</span></button>
       <button aria-label="Chọn đệm ngồi" aria-expanded={showSeats} onClick={() => { setShowSeats(!showSeats); setPeople(false); }}><Grid2X2 size={17}/><span>Chọn đệm</span></button>
       <button aria-label="Thỉnh chuông" disabled={bellBusy} onClick={ringBell}><Bell size={17}/><span>Thỉnh chuông</span></button>
       <button aria-label={network.incense ? 'Tắt hương' : 'Thắp hương'} aria-pressed={network.incense} disabled={incenseBusy} onClick={toggleIncense}><Flame size={17}/><span>{network.incense ? 'Hương đang cháy' : 'Thắp hương'}</span></button>
@@ -212,12 +216,13 @@ function App({ initialName }: { initialName: string }) {
         <small>{meditation.history.length ? `${meditation.history.length} thời thiền đã hoàn thành trên thiết bị này` : 'Chọn thời lượng để bắt đầu'}</small>
       </>}
     </section>
-    <div className="movement-pad" aria-label="Điều khiển di chuyển">{['w','a','s','d'].map((key, i) => <button key={key} disabled={settings || meditation.active}
+    <div className="movement-pad" aria-label="Điều khiển di chuyển">{['w','a','s','d'].map((key, i) => <button key={key} disabled={settings || donation || meditation.active}
       aria-label={['Đi tới','Sang trái','Đi lùi','Sang phải'][i]}
       onPointerDown={event => { event.currentTarget.setPointerCapture(event.pointerId); setDirection(key); }}
       onPointerUp={() => setDirection('')} onPointerCancel={() => setDirection('')} onLostPointerCapture={() => setDirection('')}>{['↑','←','↓','→'][i]}</button>)}</div>
     <nav className="ritual-dock glass" aria-label="Lễ nghi">{actions.map(({ value, Icon, label }) => <button key={value} aria-label={label} aria-pressed={ritual === value} onClick={() => act(value)}><Icon size={23}/>{label}</button>)}</nav>
     <footer className="hall-footer">AN YÊN <span>·</span> Cùng hiện diện, cùng lắng lại</footer>
+    {donation && <DonationDialog onClose={() => setDonation(false)}/>}
     <dialog ref={dialog} className="settings-dialog" aria-labelledby="settings-title" onCancel={() => setSettings(false)}>
       {settings && <form onSubmit={event => {
         event.preventDefault(); const data = new FormData(event.currentTarget);
