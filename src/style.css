@@ -1,0 +1,55 @@
+*{box-sizing:border-box}html,body,#root{margin:0;width:100%;height:100%;font-family:'Segoe UI',sans-serif;background:#2b2821;color:#f5f0df}button,input{font:inherit}button{cursor:pointer}button:focus-visible{outline:2px solid #edcf8b;outline-offset:4px}.temple-app{height:100svh;position:relative;overflow:hidden}.temple-app>div:first-child{height:100%}.glass{background:linear-gradient(135deg,#3e3932d9,#24241ebd);border:1px solid #e7e0cf50;backdrop-filter:blur(14px);box-shadow:0 8px 30px #0002}.hall-header{position:absolute;inset:22px 28px auto;display:flex;justify-content:space-between;gap:15px;z-index:2;pointer-events:none}.hall-header>*{pointer-events:auto}.location,.utilities{display:flex;align-items:center;gap:16px;border-radius:40px;min-height:52px;padding:8px 20px;font-size:13px}.temple-icon{font-size:28px;color:#e2d4a7}.location strong{font-size:16px}.divider{height:20px;width:1px;background:#eee4}.room-name{font-size:10px;color:#d7c9a6}.utilities button{border:0;background:none;color:#f5f0df;font-size:22px;width:30px;height:34px}.connection{position:absolute;right:40px;top:86px;font-size:11px;color:#e8e2d0;text-shadow:0 1px 3px #000}.connection i{display:inline-block;width:6px;height:6px;background:#d7b56c;border-radius:50%;margin-right:7px}.connection .online{background:#9ac7a3}.hall-notice{position:absolute;top:135px;left:50%;transform:translateX(-50%);padding:14px 23px;border-radius:30px;font-size:12px;max-width:85%;text-align:center;pointer-events:none;z-index:2}.hall-guide{position:absolute;left:36px;bottom:115px;pointer-events:none;text-shadow:0 2px 15px #0009}.hall-guide>span{font-size:9px;letter-spacing:.23em;color:#d8c99f}.hall-guide h1{font-family:Georgia,serif;font-size:36px;font-weight:400;line-height:1.15;margin:14px 0}.hall-guide p{font-size:11px;line-height:1.9;color:#dfddce}.ritual-dock{position:absolute;left:50%;bottom:32px;transform:translateX(-50%);display:flex;gap:4px;border-radius:45px;padding:7px 18px;z-index:2}.ritual-dock button{border:0;border-radius:24px;background:none;color:#c9c5b9;width:95px;min-height:60px;font-size:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}.ritual-dock button>span{font-size:25px;line-height:1}.ritual-dock button:hover,.ritual-dock button[aria-pressed=true]{background:#e9d7a516;color:#fff1c4}.hall-footer{position:absolute;bottom:10px;width:100%;text-align:center;font-size:9px;letter-spacing:.12em;color:#d1c9b9}.hall-footer span{padding:0 8px}.name-tag{display:block;white-space:nowrap;background:#29251c99;color:#fff6df;border-radius:12px;padding:4px 9px;font-size:10px;pointer-events:none}.name-tag.self{color:#f4d996}.movement-pad{display:none}.settings-dialog{width:min(420px,calc(100% - 32px));padding:30px;background:#eee8d9;color:#39352d;border:1px solid #9c8b68;border-radius:18px}.settings-dialog::backdrop{background:#171914aa;backdrop-filter:blur(6px)}.settings-dialog h2{font-family:Georgia,serif;font-size:28px;margin:12px 0}.eyebrow{font-size:10px;letter-spacing:.2em;color:#8d7547}.settings-dialog p,.settings-dialog small{font-size:12px;line-height:1.8;color:#746e61}.settings-dialog label{display:block;margin:16px 0;font-size:12px}.settings-dialog input{display:block;width:100%;margin-top:7px;padding:12px;border:1px solid #bbb09b;border-radius:7px;background:#fcf9f0;color:#39352d}.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:24px}.dialog-actions button{padding:11px 17px;border:1px solid #b3a17d;border-radius:7px;background:transparent;color:#51432d}.dialog-actions button[type=submit]{background:#65573c;color:#fff7df}.fallback{position:absolute;inset:0;display:grid;place-content:center;padding:40px;text-align:center;background:#39352d}
+@media(max-width:700px){.hall-header{inset:12px 12px auto}.location,.utilities{gap:8px;padding:6px 12px;min-height:45px}.location strong{font-size:12px}.location>span:not(.temple-icon){display:none}.utilities button{width:25px}.connection{top:69px;right:18px;font-size:10px}.hall-notice{top:104px;width:85%;padding:12px 16px}.hall-guide{display:none}.ritual-dock{bottom:28px;padding:6px 8px;width:max-content}.ritual-dock button{width:77px;font-size:10px}.movement-pad{position:absolute;display:grid;grid-template-columns:repeat(3,42px);gap:4px;left:14px;bottom:125px;z-index:2}.movement-pad button{touch-action:none;user-select:none;border:1px solid #eee5;background:#34362dbb;color:#f2ead6;border-radius:12px;height:42px;font-size:20px}.movement-pad button:first-child{grid-column:2}.movement-pad button:nth-child(2){grid-column:1}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+
+.world-viewport{position:absolute;inset:0;touch-action:none}
+.world-viewport>div{height:100%}
+.utilities button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:32px;width:auto}
+.utilities button:first-child{font-size:12px}
+.people-panel{position:absolute;top:111px;right:28px;width:280px;border-radius:18px;padding:16px;z-index:4}
+.people-panel>div{display:flex;align-items:center;justify-content:space-between;font-size:13px}
+.people-panel button{background:none;border:0;color:#f1ead7;font-size:23px}
+.people-panel ul{list-style:none;padding:0;margin:12px 0 0;max-height:40svh;overflow:auto}
+.people-panel li{display:flex;align-items:center;gap:9px;padding:9px 0;border-top:1px solid #ffffff12;font-size:12px}
+.people-panel li>span:nth-child(2){max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.people-panel small{margin-left:auto;color:#c9c2ac;font-size:10px}
+.person-avatar{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#c8ac6c;color:#372c1a}
+.meditation-card{position:absolute;right:28px;bottom:132px;width:230px;padding:20px;border-radius:18px;z-index:2;display:flex;flex-direction:column;gap:13px}
+.meditation-card .eyebrow{font-size:8px;color:#d6c79e;letter-spacing:.12em}
+.meditation-card>strong{font-family:Georgia,serif;font-size:20px;font-weight:400}
+.meditation-card>small{font-size:10px;line-height:1.6;color:#c4bead}
+.meditation-card .meditation-time{font-family:inherit;font-size:36px;font-variant-numeric:tabular-nums}
+.meditation-actions{display:flex;gap:6px}
+.meditation-actions button{flex:1;border:1px solid #d5c29655;border-radius:7px;background:#d5c29612;color:#f4e9d2;padding:9px 5px;font-size:11px;white-space:nowrap}
+.meditation-actions button:hover{background:#d5c29630}
+.settings-dialog select{display:block;width:100%;margin-top:7px;padding:12px;border:1px solid #bbb09b;border-radius:7px;background:#fcf9f0;color:#39352d}
+.movement-pad button:disabled{opacity:.4;cursor:default}
+.fallback button{padding:12px 20px;margin:10px auto;border:1px solid #d6c79e;border-radius:8px;background:#b29a67;color:#251e15}
+@media(max-width:700px){
+ .utilities{gap:3px}.utilities button{min-width:27px}.fullscreen-button{display:none!important}
+ .people-panel{right:12px;top:93px;width:min(280px,calc(100% - 24px))}
+ .meditation-card{right:12px;bottom:122px;width:172px;padding:14px;gap:9px}
+ .meditation-card>strong{font-size:17px}.meditation-card .eyebrow{font-size:7px}
+ .meditation-actions button{font-size:10px;padding:8px 3px}.meditation-card>small{font-size:9px}
+}
+@media(max-height:520px){.hall-guide{display:none}.meditation-card{bottom:106px;right:12px;padding:12px;gap:6px}.hall-notice{top:85px}.meditation-card>small{display:none}}
+@media(pointer:coarse) and (min-width:701px){.movement-pad{position:absolute;display:grid;grid-template-columns:repeat(3,44px);gap:5px;left:24px;bottom:130px;z-index:2}.movement-pad button{touch-action:none;user-select:none;height:44px;border:1px solid #eee5;border-radius:12px;background:#34362dbb;color:#f2ead6;font-size:21px}.movement-pad button:first-child{grid-column:2}.movement-pad button:nth-child(2){grid-column:1}.hall-guide{display:none}}
+.temple-tools{position:absolute;left:28px;top:100px;display:flex;gap:4px;padding:7px;border-radius:14px;z-index:2}
+.temple-tools button{border:0;background:transparent;border-radius:8px;color:#f0ead9;display:flex;align-items:center;gap:7px;font-size:11px;padding:9px 10px}
+.temple-tools button:hover,.temple-tools button[aria-pressed=true]{background:#c7b37e25;color:#f2d99b}
+button:disabled{cursor:default;opacity:.45}
+.seats-panel{position:absolute;top:111px;right:28px;width:310px;z-index:4;border-radius:18px;padding:19px}
+.panel-heading{display:flex;align-items:center;justify-content:space-between;font-size:14px}
+.panel-heading button{border:0;background:none;color:#f5edda;font-size:24px}
+.seats-panel p{font-size:11px;line-height:1.7;color:#d7cfb9;margin:10px 0 15px}
+.seat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.seat-grid button{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:67px;border:1px solid #c5b88e66;background:#c5b88e14;color:#eee5cb;border-radius:10px;font-size:11px}
+.seat-grid button>span{position:absolute;right:7px;top:6px;font-size:9px;color:#dec893}
+.seat-grid button>svg{margin-top:10px}
+.seat-grid small{font-size:8px}
+.seat-grid button[aria-pressed=true]{border-color:#e8c777;background:#c5a35833}
+.seat-grid button:disabled{background:#65473755;color:#d3baa2;opacity:.65}
+.seats-panel>small{display:block;font-size:10px;color:#c9bfa4;margin-top:14px}
+@media(max-width:700px){.temple-tools{top:91px;left:12px;right:12px;width:max-content;max-width:calc(100% - 24px);padding:4px;gap:1px}.temple-tools button{font-size:10px;padding:8px 9px;gap:5px}.hall-notice{top:145px;font-size:10px}.seats-panel{top:140px;right:12px;width:min(310px,calc(100% - 24px));max-height:calc(100svh - 255px);overflow:auto}.people-panel{top:140px}.meditation-card{bottom:124px}}
+@media(max-height:520px){.temple-tools{top:77px}.hall-notice{top:125px}.seats-panel,.people-panel{top:115px;max-height:calc(100svh - 160px);overflow:auto}}
+.world-viewport{z-index:0}

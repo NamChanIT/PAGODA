@@ -1,0 +1,1 @@
+{"root":["./src/main.tsx","./src/hooks/usemeditation.ts","./src/world/altar.tsx","./src/world/buddhastatue.tsx","./src/world/character.tsx","./src/world/hall.tsx","./src/world/templedecor.tsx","./src/world/templegarden.tsx","./src/world/world.tsx","./src/world/assets.tsx","./src/world/network.ts","./src/world/types.ts"],"version":"5.9.3"}

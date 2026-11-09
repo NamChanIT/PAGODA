@@ -1,0 +1,7 @@
+{
+  "architectureScale": [1.4, 1.1, 1.35],
+  "movement": { "minX": -11.1, "maxX": 11.1, "minZ": -4.6, "maxZ": 14.3 },
+  "camera": { "minX": -12.4, "maxX": 12.4, "minZ": -6.8, "maxZ": 17, "zoom": 6.8 },
+  "seating": { "count": 12, "columns": 4, "spacingX": 4.2, "spacingZ": 4.5, "startZ": -0.5 },
+  "spawn": { "count": 24, "columns": 8, "spacingX": 1.8, "spacingZ": 1.5, "startZ": 11, "centerZ": 12.5 }
+}
