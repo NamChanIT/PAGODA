@@ -3,7 +3,7 @@ import type { MutableRefObject } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { layout } from './types';
-import { moveOnGround } from './navigation.mjs';
+import { gardenExitStep, moveOnGround } from './navigation.mjs';
 import { Altar } from './Altar';
 import { DonationBox } from './DonationBox';
 import { Hall } from './Hall';
@@ -26,6 +26,8 @@ export function World({ incense, onBell, onIncense, onDonation, name, ritual, se
   const cameraPosition = useRef(new THREE.Vector3());
   const movingLastFrame = useRef(false);
   const lastArea = useRef('');
+  const exitRoute = useRef<{ stage: 'center' | 'exit'; centerZ: number } | null>(null);
+  useEffect(() => { if (!walkingOutside) exitRoute.current = null; }, [walkingOutside]);
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLElement && (e.target.closest('dialog') || e.target.isContentEditable || ['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName))) return;
@@ -63,11 +65,13 @@ export function World({ incense, onBell, onIncense, onDonation, name, ritual, se
       if (!movingLastFrame.current) { onRelease(); if (!paused) setRitual('stand'); }
       p.ritual = 'stand';
     } else if (!paused && walkingOutside) {
-      // Center in the hall before crossing the front wall's doorway.
-      const goal = Math.abs(p.x) > .08 && p.z < 19
-        ? { x: 0, z: Math.min(p.z, 15) } : { x: 0, z: 23 };
-      dx = goal.x - p.x; dz = goal.z - p.z;
-      if (Math.hypot(p.x, p.z - 23) < .08) { dx = 0; dz = 0; onGardenArrival(); }
+      // Keep the route stage when delayed server corrections arrive; do not
+      // repeatedly send the visitor back to the centering waypoint.
+      const confirmed = self ? peers.find(peer => peer.id === self) ?? null : p;
+      const next = gardenExitStep(p, exitRoute.current, confirmed);
+      exitRoute.current = next.route;
+      dx = next.atGoal ? 0 : next.goal.x - p.x; dz = next.atGoal ? 0 : next.goal.z - p.z;
+      if (next.arrived) onGardenArrival();
     } else if (!paused && seat) {
       dx = seat.x - p.x; dz = seat.z - p.z;
       if (Math.hypot(dx, dz) < .08) {
