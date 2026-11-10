@@ -18,8 +18,9 @@ type Props = {
   direction: string; paused: boolean; cameraAngle: number; zoom: number;
   seat: Seat | null; onSeat: (seat: Seat) => void; onRelease: () => void;
   onAreaChange: (area: string) => void;
+  walkingOutside: boolean; onGardenArrival: () => void;
 };
-export function World({ incense, onBell, onIncense, onDonation, name, ritual, setRitual, peers, self, latest, correction, direction, paused, cameraAngle, zoom, seat, onSeat, onRelease, onAreaChange }: Props) {
+export function World({ incense, onBell, onIncense, onDonation, name, ritual, setRitual, peers, self, latest, correction, direction, paused, cameraAngle, zoom, seat, onSeat, onRelease, onAreaChange, walkingOutside, onGardenArrival }: Props) {
   const player = useRef<Player>({ id: 'local', name, x: 0, z: layout.spawn.centerZ, yaw: Math.PI, ritual });
   const keys = useRef(new Set<string>());
   const cameraPosition = useRef(new THREE.Vector3());
@@ -61,6 +62,12 @@ export function World({ incense, onBell, onIncense, onDonation, name, ritual, se
       dz = vertical * Math.cos(cameraAngle) - horizontal * Math.sin(cameraAngle);
       if (!movingLastFrame.current) { onRelease(); if (!paused) setRitual('stand'); }
       p.ritual = 'stand';
+    } else if (!paused && walkingOutside) {
+      // Center in the hall before crossing the front wall's doorway.
+      const goal = Math.abs(p.x) > .08 && p.z < 19
+        ? { x: 0, z: Math.min(p.z, 15) } : { x: 0, z: 23 };
+      dx = goal.x - p.x; dz = goal.z - p.z;
+      if (Math.hypot(p.x, p.z - 23) < .08) { dx = 0; dz = 0; onGardenArrival(); }
     } else if (!paused && seat) {
       dx = seat.x - p.x; dz = seat.z - p.z;
       if (Math.hypot(dx, dz) < .08) {
