@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "server": "node server/index.mjs",
-    "test:server": "node --test server/server.test.mjs",
+    "test:server": "node --test server/server.test.mjs server/navigation.test.mjs",
     "dev:all": "node scripts/dev.mjs",
     "start": "node server/index.mjs",
     "play:lan": "node scripts/lan.mjs"

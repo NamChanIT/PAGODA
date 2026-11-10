@@ -3,6 +3,7 @@ import type { MutableRefObject } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { layout } from './types';
+import { moveOnGround } from './navigation.mjs';
 import { Altar } from './Altar';
 import { DonationBox } from './DonationBox';
 import { Hall } from './Hall';
@@ -16,12 +17,14 @@ type Props = {
   correction: MutableRefObject<Correction | null>;
   direction: string; paused: boolean; cameraAngle: number; zoom: number;
   seat: Seat | null; onSeat: (seat: Seat) => void; onRelease: () => void;
+  onAreaChange: (area: string) => void;
 };
-export function World({ incense, onBell, onIncense, onDonation, name, ritual, setRitual, peers, self, latest, correction, direction, paused, cameraAngle, zoom, seat, onSeat, onRelease }: Props) {
+export function World({ incense, onBell, onIncense, onDonation, name, ritual, setRitual, peers, self, latest, correction, direction, paused, cameraAngle, zoom, seat, onSeat, onRelease, onAreaChange }: Props) {
   const player = useRef<Player>({ id: 'local', name, x: 0, z: layout.spawn.centerZ, yaw: Math.PI, ritual });
   const keys = useRef(new Set<string>());
   const cameraPosition = useRef(new THREE.Vector3());
   const movingLastFrame = useRef(false);
+  const lastArea = useRef('');
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLElement && (e.target.closest('dialog') || e.target.isContentEditable || ['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName))) return;
@@ -68,12 +71,16 @@ export function World({ incense, onBell, onIncense, onDonation, name, ritual, se
     movingLastFrame.current = manual;
     if (dx || dz) {
       const length = Math.hypot(dx, dz), step = Math.min(3.4 * dt, manual ? Infinity : length);
-      p.x += dx / length * step; p.z += dz / length * step;
+      Object.assign(p, moveOnGround(p, { x: p.x + dx / length * step, z: p.z + dz / length * step }, layout.movement, layout.obstacles));
       p.yaw = Math.atan2(dx, dz); p.ritual = 'stand';
     }
     p.x = THREE.MathUtils.clamp(p.x, layout.movement.minX, layout.movement.maxX); p.z = THREE.MathUtils.clamp(p.z, layout.movement.minZ, layout.movement.maxZ);
     p.seatId = seat?.id ?? null;
     latest.current = { ...p };
+    const area = Math.abs(p.x) < 12.5 && p.z < 19 ? 'Chính điện' :
+      p.z > 39 ? 'Cổng tam quan' : Math.abs(p.x) > 21 && p.z < 10 ? 'Chòi an tịnh' :
+      Math.abs(p.x) > 15 && p.z < 12 ? 'Vườn sen' : 'Sân vườn';
+    if (area !== lastArea.current) { lastArea.current = area; onAreaChange(area); }
     cameraPosition.current.set(
       THREE.MathUtils.clamp(p.x + Math.sin(cameraAngle) * zoom, layout.camera.minX, layout.camera.maxX),
       2.9 + zoom * .1,

@@ -43,6 +43,9 @@ async function page(width, height) {
   await tab.send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: width < 600 });
   if (process.env.TEST_LOW_QUALITY) await tab.send('Page.addScriptToEvaluateOnNewDocument', { source: "localStorage.setItem('chua3d.quality', 'low')" });
   await tab.send('Page.navigate', { url: `${base}/?room=${testRoom}` });
+  await tab.wait(`!!document.querySelector('#entrance-name')`);
+  await tab.evaluate(`(() => { const input = document.querySelector('#entrance-name'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, 'Khách kiểm tra'); input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+  await tab.evaluate(`document.querySelector('.entrance form').requestSubmit()`);
   await tab.wait(`document.querySelector('.connection')?.textContent.includes('Đã kết nối')`);
   return tab;
 }

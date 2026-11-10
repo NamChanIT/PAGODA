@@ -1,7 +1,19 @@
 {
   "architectureScale": [1.4, 1.1, 1.35],
-  "movement": { "minX": -11.1, "maxX": 11.1, "minZ": -4.6, "maxZ": 14.3 },
-  "camera": { "minX": -12.4, "maxX": 12.4, "minZ": -6.8, "maxZ": 17, "zoom": 6.8 },
+  "movement": { "minX": -36, "maxX": 36, "minZ": -4.6, "maxZ": 49 },
+  "obstacles": [
+    { "minX": -14.1, "maxX": -12.5, "minZ": -6, "maxZ": 19.4 },
+    { "minX": 12.5, "maxX": 14.1, "minZ": -6, "maxZ": 19.4 },
+    { "minX": -12.5, "maxX": -7.3, "minZ": 16.6, "maxZ": 17.9 },
+    { "minX": 7.3, "maxX": 12.5, "minZ": 16.6, "maxZ": 17.9 },
+    { "minX": -23.1, "maxX": -16.1, "minZ": -7.9, "maxZ": -0.2 },
+    { "minX": 16.1, "maxX": 23.1, "minZ": -7.9, "maxZ": -0.2 },
+    { "minX": -14.8, "maxX": -10.4, "minZ": 25.7, "maxZ": 36.4 },
+    { "minX": 10.4, "maxX": 14.8, "minZ": 25.7, "maxZ": 36.4 },
+    { "minX": -31.6, "maxX": -27.2, "minZ": 19, "maxZ": 26.9 },
+    { "minX": 27.2, "maxX": 31.6, "minZ": 19, "maxZ": 26.9 }
+  ],
+  "camera": { "minX": -43, "maxX": 43, "minZ": -11.4, "maxZ": 57, "zoom": 6.8 },
   "seating": { "count": 12, "columns": 4, "spacingX": 4.2, "spacingZ": 4.5, "startZ": -0.5 },
   "spawn": { "count": 24, "columns": 8, "spacingX": 1.8, "spacingZ": 1.5, "startZ": 11, "centerZ": 12.5 }
 }

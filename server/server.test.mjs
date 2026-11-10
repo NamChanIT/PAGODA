@@ -146,8 +146,20 @@ test('expanded hall keeps rear spawn positions and allows the new side aisles', 
     assert.equal(response.status, 200); player = (await response.json()).player;
   }
   assert.ok(player.x > 9, `New aisle inaccessible: ${player.x}`);
-  assert.ok(player.x <= 11.1);
+  assert.ok(player.x <= 12.5, 'The hall side wall must stop sideways movement');
   assert.equal((await post('seat', { seatId: 11 }, session.secret)).status, 200);
+}));
+
+test('server accepts walking through the entrance into the shared courtyard', { timeout: 10000 }, () => withServer(async ({ post }) => {
+  const session = await (await post('join', { room: 'garden-walk' })).json();
+  let player = session.player;
+  for (let i = 0; i < 17; i++) {
+    await new Promise(resolve => setTimeout(resolve, 180));
+    const response = await post('state', { ...player, z: player.z + .65 }, session.secret);
+    assert.equal(response.status, 200); player = (await response.json()).player;
+  }
+  assert.ok(player.z > 21, `Could not leave the hall: ${player.z}`);
+  assert.ok(Math.abs(player.x) < 7.3, 'Walk through the central doorway');
 }));
 
 test('built website and API share a port without exposing source files', { timeout: 10000 }, () => withServer(async ({ base }) => {

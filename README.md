@@ -36,7 +36,7 @@ Có thể đổi cổng bằng `PORT=4180 npm run play:lan`. `npm start` chạy 
 
 ## Không gian
 
-Chính điện có ba tượng Phật tọa thiền (tượng giữa lớn hơn), rộng hơn bản đầu 40% theo chiều ngang và 35% theo chiều sâu; các đệm được giãn ra để có lối đi rộng. Kiến trúc có cột gỗ trên chân đá, mái dốc và xà, hoành phi tiếng Việt, hai bảng chữ, đèn treo, bàn lễ với hoa/quả/nến. Qua cửa nhìn ra sân gạch, đèn đá, hồ sen, cây, nhà mái ngói và cổng. Sân vườn hiện là cảnh nền; vùng di chuyển vẫn nằm trong chính điện.
+Chính điện có ba tượng Phật tọa thiền (tượng giữa lớn hơn), rộng hơn bản đầu 40% theo chiều ngang và 35% theo chiều sâu; các đệm được giãn ra để có lối đi rộng. Kiến trúc có cột gỗ trên chân đá, mái dốc và xà, hoành phi tiếng Việt, hai bảng chữ, đèn treo, bàn lễ với hoa/quả/nến. Qua cửa nhìn ra sân gạch, đèn đá, hồ sen, cây, nhà mái ngói và cổng. Khách có thể đi qua cửa chính ra sân gạch, dạo hai bên chùa, đến hồ sen, chòi an tịnh và cổng tam quan. Có bồn hoa, cây cao, đèn đá và biển chỉ dẫn; thanh đầu trang hiển thị khu vực hiện tại. Dùng WASD/phím mũi tên hoặc cụm nút trên điện thoại; kéo để xoay camera. Tường bên chính điện, hồ sen và bồn hoa có va chạm dùng chung trên trình duyệt và máy chủ. Muốn chọn đệm, quay lại chính điện qua cửa chính trước.
 
 ## Điều khiển
 
@@ -88,7 +88,8 @@ Script tạo phòng test riêng, kiểm tra lễ nghi, hộp thoại, thiền, h
 - `src/world/Altar.tsx`: bát chuông, lư hương và khói chuyển động.
 - `src/world/Hall.tsx`: chính điện, ánh sáng và đệm tương tác.
 - `src/world/TempleDecor.tsx`: kiến trúc gỗ, bảng chữ và đồ lễ.
-- `src/world/TempleGarden.tsx`: sân gạch, cây, hồ sen, đèn đá, nhà mái ngói và cổng.
+- `src/world/TempleGarden.tsx`: sân gạch có thể đi dạo, cây cao, bồn hoa, hồ sen, đèn đá, chòi nghỉ, biển chỉ dẫn và cổng.
+- `src/world/navigation.mjs`: di chuyển và va chạm dùng chung giữa trình duyệt và máy chủ.
 - `src/world/Character.tsx`: nhân vật, chuỗi hạt, animation, nội suy chuyển động.
 - `src/world/network.ts`: phiên ẩn danh, SSE, tự vào lại, hàng đợi giữ/trả đệm.
 - `src/world/BuddhaStatue.tsx`: tượng tọa thiền, nếp áo, đài sen và hào quang.
@@ -100,7 +101,7 @@ Script tạo phòng test riêng, kiểm tra lễ nghi, hộp thoại, thiền, h
 
 ## Phạm vi và bước tiếp theo
 
-Đây là bản thử nghiệm local/LAN, chưa phải dịch vụ công khai. Chưa có tài khoản, database, chat, thanh toán, giọng nói hoặc model/texture chuyên nghiệp như ảnh tham chiếu. Người chơi đi xuyên nhau; va chạm hiện giới hạn vùng sàn và bàn thờ, chưa có physics đầy đủ. Giữ đệm chưa có thời hạn riêng: sẽ được trả khi đứng dậy, rời phòng hoặc phiên hết hạn sau 20 giây không gửi dữ liệu.
+Đây là bản thử nghiệm local/LAN, chưa phải dịch vụ công khai. Chưa có tài khoản, database, chat, thanh toán, giọng nói hoặc model/texture chuyên nghiệp như ảnh tham chiếu. Người chơi đi xuyên nhau; va chạm hiện giới hạn khuôn viên, tường chính điện, hồ sen và bồn hoa, chưa có physics đầy đủ cho cây, cột và đồ trang trí. Giữ đệm chưa có thời hạn riêng: sẽ được trả khi đứng dậy, rời phòng hoặc phiên hết hạn sau 20 giây không gửi dữ liệu.
 
 Máy chủ giới hạn di chuyển bằng ngân sách theo thời gian và gửi trạng thái tối đa 10 lần/giây/phòng. Người chơi áp dụng độ lệch máy chủ trả về, giữ chuyển động đầu vào trong thời gian chờ. Đây chưa phải hệ thống chống gian lận hoàn chỉnh. Kết nối chập chờn có thể khiến nhân vật được hiệu chỉnh về vị trí máy chủ hoặc vào lại tại cửa.
 

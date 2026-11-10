@@ -58,6 +58,7 @@ function Entrance() {
 function App({ initialName }: { initialName: string }) {
   const [name, setName] = useState(initialName);
   const [room, setRoom] = useState(roomFromURL);
+  const [area, setArea] = useState('Chính điện');
   const [ritual, setRitual] = useState<Ritual>('stand');
   const [direction, setDirection] = useState('');
   const [angle, setAngle] = useState(0); const [zoom, setZoom] = useState(layout.camera.zoom);
@@ -88,6 +89,7 @@ function App({ initialName }: { initialName: string }) {
     if (seatBusy || network.seatId.current !== null) void network.reserve(null).catch(() => notify('Chưa thể trả đệm. Hệ thống sẽ trả chỗ khi phiên kết thúc.'));
   };
   const chooseSeat = async (chosen: Seat) => {
+    if (area !== 'Chính điện') { notify('Bạn hãy quay lại chính điện qua cửa chính để chọn đệm.'); return; }
     if (seatBusy) return;
     const requestId = ++seatRequest.current; setSeatBusy(true);
     try {
@@ -160,11 +162,11 @@ function App({ initialName }: { initialName: string }) {
         <World incense={network.incense} onBell={ringBell} onIncense={toggleIncense} onDonation={openDonation} name={name} ritual={ritual} setRitual={setRitual} peers={network.players} self={network.self.current}
           latest={network.latest} correction={network.correction} direction={direction}
           paused={settings || donation || meditation.active} cameraAngle={angle} zoom={zoom} seat={seat}
-          onSeat={chooseSeat} onRelease={releaseSeat}/>
+          onSeat={chooseSeat} onRelease={releaseSeat} onAreaChange={setArea}/>
       </Canvas></Boundary>
     </div>
     <header className="hall-header">
-      <div className="glass location"><span className="temple-icon">⌂</span><strong>Chùa An Yên</strong><span className="divider"/><span>Chính điện</span><span className="room-name">{room}</span></div>
+      <div className="glass location"><span className="temple-icon">⌂</span><strong>Chùa An Yên</strong><span className="divider"/><span>{area}</span><span className="room-name">{room}</span></div>
       <div className="glass utilities">
         <button aria-label="Người trong phòng" aria-expanded={people} onClick={() => { setPeople(!people); setShowSeats(false); }}><Users size={18}/><span>{network.connected ? network.players.length : 1}</span></button>
         <button aria-label={audio ? 'Tắt âm nền' : 'Bật âm nền'} aria-pressed={audio} onClick={() => {
@@ -198,7 +200,7 @@ function App({ initialName }: { initialName: string }) {
       <small>{seatBusy ? 'Đang giữ chỗ…' : 'Đệm đã có người giữ sẽ không thể chọn.'}</small>
     </section>}
     {notice && <div className="hall-notice glass" role="status">{notice}</div>}
-    <aside className="hall-guide"><span>KHÔNG GIAN TĨNH TÂM</span><h1>Trở về với<br/>bình yên.</h1><p>Chọn một đệm để ngồi xuống.<br/>W A S D / ↑ ↓ ← → để di chuyển.<br/>Kéo để xoay · Cuộn để thu phóng.</p></aside>
+    <aside className="hall-guide"><span>KHÔNG GIAN TĨNH TÂM</span><h1>Trở về với<br/>bình yên.</h1><p>{area === 'Chính điện' ? 'Qua cửa chính để dạo sân vườn.' : 'Dạo bước bên hồ sen và chòi nghỉ.'}<br/>W A S D / ↑ ↓ ← → để di chuyển.<br/>Kéo để xoay · Cuộn để thu phóng.</p></aside>
     <div className="temple-tools glass" aria-label="Tương tác chính điện">
       <button aria-label="Mở hòm công đức" onClick={openDonation}><Hand size={17}/><span>Công đức</span></button>
       <button aria-label="Chọn đệm ngồi" aria-expanded={showSeats} onClick={() => { setShowSeats(!showSeats); setPeople(false); }}><Grid2X2 size={17}/><span>Chọn đệm</span></button>

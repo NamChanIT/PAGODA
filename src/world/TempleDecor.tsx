@@ -4,7 +4,7 @@ import * as THREE from 'three';
 export function Timber({ position, size, color = '#502f24' }: { position: [number, number, number]; size: [number, number, number]; color?: string }) {
   return <mesh position={position} castShadow receiveShadow><boxGeometry args={size}/><meshStandardMaterial color={color} roughness={.85}/></mesh>;
 }
-function Inscription({ text, width, height, vertical = false }: { text: string; width: number; height: number; vertical?: boolean }) {
+export function Inscription({ text, width, height, vertical = false }: { text: string; width: number; height: number; vertical?: boolean }) {
   const texture = useMemo(() => {
     const canvas = document.createElement('canvas'); canvas.width = vertical ? 256 : 1024; canvas.height = vertical ? 1024 : 256;
     const ctx = canvas.getContext('2d'); if (!ctx) return null;

@@ -1,4 +1,5 @@
 import http from 'node:http';
+import { moveOnGround } from '../src/world/navigation.mjs';
 import { serveStatic } from './static.mjs';
 import { networkInterfaces } from 'node:os';
 import { readFileSync } from 'node:fs';
@@ -106,8 +107,7 @@ const server = http.createServer(async (req, res) => {
     const dx = body.x - session.player.x, dz = body.z - session.player.z;
     const distance = Math.hypot(dx, dz); const ratio = Math.min(1, maxStep / (distance || 1));
     session.budget -= Math.min(distance, maxStep);
-    session.player.x = Math.max(bounds.minX, Math.min(bounds.maxX, session.player.x + dx * ratio));
-    session.player.z = Math.max(bounds.minZ, Math.min(bounds.maxZ, session.player.z + dz * ratio));
+    Object.assign(session.player, moveOnGround(session.player, { x: session.player.x + dx * ratio, z: session.player.z + dz * ratio }, bounds, layout.obstacles));
     session.player.yaw = body.yaw % (Math.PI * 2); session.player.ritual = body.ritual; session.seen = now;
     dirtyRooms.add(session.room); reply(200, { player: session.player });
   } catch { reply(400, { error: 'Invalid request' }); }
