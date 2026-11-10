@@ -26,7 +26,7 @@ export function Hall({ onSeat, occupied, selected }: { onSeat: (seat: Seat) => v
     <group scale={layout.architectureScale as [number, number, number]}><TempleGarden/><TempleDecor/></group>
     <GardenSky/>
     <color attach="background" args={['#e2e3d1']}/><fog attach="fog" args={['#e2e3d1', 55, 135]}/>
-    <ambientLight intensity={.65}/><hemisphereLight args={['#f5e7c7', '#292325', 1.5]}/>
+    <ambientLight intensity={.5}/><hemisphereLight args={['#f5e7c7', '#424b3b', 1.2]}/>
     <directionalLight position={[-25, 35, 18]} color="#fff0d0" intensity={2.4} castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-52} shadow-camera-right={52} shadow-camera-top={52} shadow-camera-bottom={-52} shadow-camera-far={120} shadow-bias={-.0003} shadow-normalBias={.04}/>
     <pointLight position={[0, 8, -10]} color="#ffd18a" intensity={65} distance={24}/>
     <pointLight position={[0, 5.7, -3.5]} color="#fff1d6" intensity={45} distance={24}/>

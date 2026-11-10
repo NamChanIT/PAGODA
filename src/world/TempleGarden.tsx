@@ -1,6 +1,7 @@
 import { memo, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { Inscription, Timber } from './TempleDecor';
+import { BambooGrove, CurvedRoof, DriftingPetals, PathMedallions } from './GardenOrnaments';
 import { DistantLandscape, GardenBench, GardenFlowers, LotusPond, OrnamentalTree, StoneGarden } from './GardenScenery';
 function StoneLantern({ x, z }: { x: number; z: number }) {
   return <group position={[x, -.28, z]}>
@@ -17,21 +18,20 @@ function Pavilion({ x }: { x: number }) {
   return <group position={[x, -.3, 0]}>
     <Timber position={[0, .16, 0]} size={[7.8, .32, 8]} color="#99917b"/>
     {[-1, 1].map(side => <group key={side}>
-      {[-2.8, 2.8].map(z => <mesh key={z} position={[side * 2.8, 1.95, z]} castShadow><cylinderGeometry args={[.16, .2, 3.5, 12]}/><meshStandardMaterial color="#71452f" roughness={.9}/></mesh>)}
-      <mesh position={[side * 1.85, 4.25, 0]} rotation={[0, 0, -side * .27]} castShadow><boxGeometry args={[4.0, .2, 8.2]}/><meshStandardMaterial color="#65716a" roughness={.9}/></mesh>
-      <Timber position={[side * 3.7, 3.72, 0]} size={[.14, .16, 8.3]} color="#a57b4b"/>
+      {[-2.8, 2.8].map(z => <group key={z}>
+        <mesh position={[side * 2.8, 1.95, z]} castShadow><cylinderGeometry args={[.16, .2, 3.5, 12]}/><meshStandardMaterial color="#71452f" roughness={.9}/></mesh>
+        <Timber position={[side * 2.8, .35, z]} size={[.55, .3, .55]} color="#b4ac92"/>
+      </group>)}
+      <Timber position={[side * 2.8, 3.65, 0]} size={[.2, .24, 6.2]} color="#875d3c"/>
     </group>)}
+    <group rotation={[0, Math.PI / 2, 0]}><CurvedRoof width={8.4} depth={8.1} rise={1.25} y={3.7}/></group>
     <GardenBench x={-2.2} z={-1.7} turn={Math.PI / 2}/>
     <GardenBench x={2.2} z={-1.7} turn={-Math.PI / 2}/>
     <group position={[0, 3.2, 0]}>
       <mesh><sphereGeometry args={[.28, 12, 8]}/><meshStandardMaterial color="#e8be7b" emissive="#c58738" emissiveIntensity={.7}/></mesh>
       <Timber position={[0, .6, 0]} size={[.03, .7, .03]} color="#6b5035"/>
     </group>
-    <Timber position={[0, 4.84, 0]} size={[.2, .22, 8.4]} color="#9c7647"/>
     <group position={[0, 2.7, 4.12]}><Inscription text="CHÒI AN TỊNH" width={3} height={.48}/></group>
-    {Array.from({ length: 20 }, (_, i) => <group key={i} position={[0, 0, -3.9 + i * .41]}>
-      {[-1, 1].map(side => <mesh key={side} position={[side * 1.85, 4.38, 0]} rotation={[0, 0, -side * .27]}><boxGeometry args={[4.0, .06, .045]}/><meshStandardMaterial color="#899085" roughness={1}/></mesh>)}
-    </group>)}
   </group>;
 }
 function GardenBed({ x, z, length = 5 }: { x: number; z: number; length?: number }) {
@@ -88,12 +88,16 @@ function Garden() {
   return <group>
     <DistantLandscape/>
     <GardenFlowers/>
+    <DriftingPetals/>
+    <PathMedallions/>
     <mesh position={[0, -.07, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow><planeGeometry args={[180, 180]}/><meshStandardMaterial color="#829267" roughness={1}/></mesh>
     <instancedMesh ref={tiles} args={[undefined, undefined, paving.length]} receiveShadow><boxGeometry args={[1.22, .12, 1.22]}/><meshStandardMaterial map={stoneTexture} roughness={.98}/></instancedMesh>
     <Timber position={[0, -.02, 14.1]} size={[20, .06, 1.2]} color="#b5a68c"/>
     <GardenSign x={4.7} z={19} text="CHÍNH ĐIỆN · LỐI VÀO"/>
     {[-1, 1].map(side => <group key={side}>
       <Pavilion x={side * 19}/>
+      {[8, 22, 34].map((z, i) => <BambooGrove key={`bamboo-${z}`} x={side * 26} z={z} seed={i + (side + 1) * 2}/>)}
+      <BambooGrove x={side * 24} z={-7} seed={8}/>
       {[-10, 7, 17, 27, 35].map((z, i) => <OrnamentalTree key={z} x={side * 11.2} z={z} scale={i % 2 ? .9 : 1.1} flowering={i === 2 || i === 4}/>)}
       {[-5, 5, 15, 25, 35].map((z, i) => <OrnamentalTree key={`outer-${z}`} x={side * 26.7} z={z} scale={1 + i % 2 * .2}/>)}
       <GardenBed x={side * 9} z={23} length={7}/>
@@ -113,9 +117,15 @@ function Garden() {
       {[-4, 4].map(x => <Timber key={x} position={[x, 2.1, 0]} size={[.6, 4.2, .6]} color="#a3977f"/>)}
       <group position={[0, 3.25, -.45]} rotation={[0, Math.PI, 0]}><Inscription text="AN YÊN" width={3} height={.7}/></group>
       <group position={[0, 3.25, .45]}><Inscription text="AN YÊN" width={3} height={.7}/></group>
-      <Timber position={[0, 4.9, 0]} size={[10.3, .14, .16]} color="#ae9670"/>
       <Timber position={[0, 4.1, 0]} size={[9.2, .4, .8]} color="#6b422e"/>
-      {[-1, 1].map(side => <mesh key={side} position={[0, 4.43, side * .65]} rotation={[-side * .4, 0, 0]} castShadow><boxGeometry args={[10.2, .16, 1.7]}/><meshStandardMaterial color="#65716a" roughness={.85}/></mesh>)}
+      {[-1, 1].map(side => <group key={side}>
+        <Timber position={[side * 4, .2, 0]} size={[1, .4, .95]} color="#c5c0a4"/>
+        <Timber position={[side * 4, 3.85, 0]} size={[1.15, .3, 1]} color="#bca779"/>
+        <group position={[side * 3.5, 3.75, 0]} rotation={[0, 0, side * -.45]}><Timber position={[0, 0, 0]} size={[1.5, .16, .3]} color="#946d46"/></group>
+      </group>)}
+      <CurvedRoof width={10.8} depth={3.6} rise={1} y={4.1}/>
+      <Timber position={[0, 5.3, 0]} size={[4.8, .55, 1.4]} color="#815a3e"/>
+      <CurvedRoof width={5.7} depth={2.4} rise={.65} y={5.2}/>
     </group>
   </group>;
 }

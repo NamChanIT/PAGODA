@@ -27,11 +27,11 @@ function Clusters({ items, stone = false, shadow = false }: { items: Instance[];
 }
 
 export function OrnamentalTree({ x, z, scale = 1, flowering = false }: { x: number; z: number; scale?: number; flowering?: boolean }) {
-  const leaves = useMemo<Instance[]>(() => Array.from({ length: 13 }, (_, i) => {
-    const turn = i * 2.4, radius = i < 9 ? 1.25 : .55;
+  const leaves = useMemo<Instance[]>(() => Array.from({ length: 27 }, (_, i) => {
+    const turn = i * 2.4, radius = i < 20 ? 1.65 : .55;
     return { at: [Math.sin(turn) * radius, 5.1 + noise(i + 7) * 1.8, Math.cos(turn) * radius],
-      scale: [1.2 + noise(i), .85 + noise(i + 3) * .35, 1.15],
-      color: flowering ? ['#c6929d', '#dba8af', '#edd0c4'][i % 3] : ['#526b48', '#71834f', '#849660'][i % 3] };
+      scale: [.7 + noise(i) * .55, .65 + noise(i + 3) * .35, .9],
+      color: flowering ? ['#bd8798', '#dca6b4', '#f0c8c9'][i % 3] : ['#3f624c', '#67834f', '#96a76b'][i % 3] };
   }), [flowering]);
   const blossoms = useMemo<Instance[]>(() => Array.from({ length: 38 }, (_, i) => ({
     at: [Math.sin(i * 2.4) * (1 + noise(i) * 1.6), 4.8 + noise(i + 23) * 2.3, Math.cos(i * 2.4) * (1 + noise(i) * 1.6)],
@@ -48,6 +48,7 @@ export function OrnamentalTree({ x, z, scale = 1, flowering = false }: { x: numb
 
 export function LotusPond({ x, z }: { x: number; z: number }) {
   const ripples = useRef<THREE.Group>(null);
+  const fish = useRef<THREE.Group>(null);
   const planting = useMemo<Instance[]>(() => {
     const items: Instance[] = [];
     for (let i = 0; i < 16; i++) {
@@ -56,26 +57,46 @@ export function LotusPond({ x, z }: { x: number; z: number }) {
       if (i % 3) continue;
       for (let petal = 0; petal < 9; petal++) {
         const a = petal / 9 * Math.PI * 2;
-        items.push({ at: [x + Math.sin(a) * .13, .32, z + Math.cos(a) * .13], scale: [.09, .13, .09], color: petal % 2 ? '#edbfc0' : '#f6d9ce' });
+        items.push({ at: [x + Math.sin(a) * .14, .285, z + Math.cos(a) * .14], scale: [.075, .045, .16], turn: a, color: petal % 2 ? '#e8b1c2' : '#f7d9dd' });
+      }
+      for (let petal = 0; petal < 5; petal++) {
+        const a = petal / 5 * Math.PI * 2;
+        items.push({ at: [x + Math.sin(a) * .065, .33, z + Math.cos(a) * .065], scale: [.055, .085, .095], turn: a, color: '#f5d4d9' });
       }
       items.push({ at: [x, .37, z], scale: [.07, .06, .07], color: '#dfbc64' });
     }
     return items;
   }, []);
-  useFrame(({ clock }) => ripples.current?.children.forEach((ring, i) => {
-    const phase = (clock.elapsedTime * .22 + i / 3) % 1;
-    ring.scale.setScalar(.25 + phase * .8);
-    (ring as THREE.Mesh<THREE.RingGeometry, THREE.MeshBasicMaterial>).material.opacity = (1 - phase) * .23;
-  }));
+  useFrame(({ clock }) => {
+    ripples.current?.children.forEach((ring, i) => {
+      const phase = (clock.elapsedTime * .22 + i / 3) % 1;
+      ring.scale.setScalar(.25 + phase * .8);
+      (ring as THREE.Mesh<THREE.RingGeometry, THREE.MeshBasicMaterial>).material.opacity = (1 - phase) * .23;
+    });
+    fish.current?.children.forEach((koi, i) => {
+      const phase = clock.elapsedTime * .16 + i * 2.1;
+      koi.position.set(Math.cos(phase) * (1.1 + i * .07), .145, Math.sin(phase) * 1.6);
+      koi.rotation.y = Math.atan2(-Math.cos(phase) * 1.6, -Math.sin(phase) * 1.1);
+    });
+  });
   return <group position={[x, 0, z]}>
     <Timber position={[0, .04, 0]} size={[4.4, .12, 4.9]} color="#777b68"/>
-    <mesh position={[0, .18, 0]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[4, 4.5]}/><meshStandardMaterial color="#528b80" metalness={.28} roughness={.22}/></mesh>
+    <mesh position={[0, .105, 0]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[4, 4.5]}/><meshStandardMaterial color="#3e6961" roughness={1}/></mesh>
+    <mesh position={[0, .18, 0]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[4, 4.5]}/><meshStandardMaterial color="#73b8a9" metalness={.2} roughness={.18} transparent opacity={.55} depthWrite={false}/></mesh>
+    <group ref={fish}>{[0, 1, 2].map(i => <group key={i}>
+      <mesh scale={[.2, .025, .065]}><sphereGeometry args={[1, 10, 6]}/><meshStandardMaterial color={i === 1 ? '#e8a45f' : '#f3e7cf'} roughness={.45}/></mesh>
+      <mesh position={[.03, .02, 0]} scale={[.085, .012, .05]}><sphereGeometry args={[1, 8, 6]}/><meshStandardMaterial color={i === 2 ? '#57534b' : '#d97844'} roughness={.5}/></mesh>
+      <mesh position={[-.22, 0, 0]} rotation={[0, 0, Math.PI / 2]} scale={[1, 1, .3]}><coneGeometry args={[.065, .13, 4]}/><meshStandardMaterial color="#d99d72" roughness={.5}/></mesh>
+    </group>)}</group>
     {[-1, 1].map(side => <group key={side}>
       <Timber position={[side * 2.12, .2, 0]} size={[.18, .25, 4.9]} color="#bdbea3"/>
       <Timber position={[0, .2, side * 2.36]} size={[4.4, .25, .18]} color="#bdbea3"/>
     </group>)}
     <Clusters items={planting}/>
-    <group ref={ripples} position={[.6, .205, .35]}>{[0, 1, 2].map(i => <mesh key={i} rotation={[-Math.PI / 2, 0, 0]}><ringGeometry args={[.65, .665, 40]}/><meshBasicMaterial color="#dce8c5" transparent opacity={.2} depthWrite={false}/></mesh>)}</group>
+    <mesh position={[-1.7, .42, -1.7]} scale={[.35, .5, .4]} castShadow><dodecahedronGeometry args={[1, 0]}/><meshStandardMaterial color="#8a9787" roughness={1}/></mesh>
+    <mesh position={[-1.25, .71, -1.6]} rotation={[0, 0, Math.PI / 2]}><cylinderGeometry args={[.055, .065, .8, 8]}/><meshStandardMaterial color="#b1a478" roughness={.8}/></mesh>
+    <mesh position={[-.85, .445, -1.6]}><cylinderGeometry args={[.013, .022, .53, 6]}/><meshStandardMaterial color="#c2e0d3" transparent opacity={.65} roughness={.15}/></mesh>
+    <group ref={ripples} position={[-.85, .205, -1.6]}>{[0, 1, 2].map(i => <mesh key={i} rotation={[-Math.PI / 2, 0, 0]}><ringGeometry args={[.35, .365, 40]}/><meshBasicMaterial color="#dce8c5" transparent opacity={.2} depthWrite={false}/></mesh>)}</group>
   </group>;
 }
 
@@ -100,7 +121,14 @@ export function GardenFlowers() {
       const x = side * ((bed ? 9 : 21) + (noise(i * 7) - .5) * 1.9);
       const z = (bed ? 23 : 17) + (noise(i * 7 + 1) - .5) * (bed ? 6 : 4);
       flowers.push({ at: [x, .27, z], scale: [.17, .2 + noise(i + 3) * .2, .17], color: ['#657c47', '#839351', '#71854e'][i % 3] });
-      if (i % 2) flowers.push({ at: [x, .55 + noise(i + 3) * .2, z], scale: [.09, .07, .09], color: ['#f0dfb0', '#dbaaac', '#c39fbd', '#eee8ce'][i % 4] });
+      if (i % 2) {
+        const y = .55 + noise(i + 3) * .2;
+        for (let petal = 0; petal < 5; petal++) {
+          const a = petal / 5 * Math.PI * 2;
+          flowers.push({ at: [x + Math.sin(a) * .075, y, z + Math.cos(a) * .075], scale: [.065, .035, .065], color: ['#f3e3b7', '#e8afc1', '#cab6d7', '#f9edda'][i % 4] });
+        }
+        flowers.push({ at: [x, y + .02, z], scale: [.04, .03, .04], color: '#d9b957' });
+      }
     }
     return flowers;
   }, []);
@@ -142,7 +170,11 @@ export function GardenSky() {
         varying vec3 vDirection;
         void main() {
           float height = clamp(normalize(vDirection).y, 0.0, 1.0);
-          gl_FragColor = vec4(mix(horizonColor, topColor, pow(height, 0.5)), 1.0);
+          vec3 sky = mix(horizonColor, topColor, pow(height, 0.5));
+          float sun = max(dot(normalize(vDirection), normalize(vec3(0.45, 0.23, 1.0))), 0.0);
+          sky += vec3(0.5, 0.31, 0.12) * pow(sun, 90.0) * 0.3;
+          sky = mix(sky, vec3(1.0, 0.87, 0.61), smoothstep(0.99945, 0.9998, sun) * 0.9);
+          gl_FragColor = vec4(sky, 1.0);
           #include <tonemapping_fragment>
           #include <colorspace_fragment>
         }

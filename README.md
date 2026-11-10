@@ -36,7 +36,7 @@ Có thể đổi cổng bằng `PORT=4180 npm run play:lan`. `npm start` chạy 
 
 ## Không gian
 
-Chính điện có ba tượng Phật tọa thiền (tượng giữa lớn hơn), rộng hơn bản đầu 40% theo chiều ngang và 35% theo chiều sâu; các đệm được giãn ra để có lối đi rộng. Kiến trúc có cột gỗ trên chân đá, mái dốc và xà, hoành phi tiếng Việt, hai bảng chữ, đèn treo, bàn lễ với hoa/quả/nến. Qua cửa nhìn ra sân gạch, đèn đá, hồ sen, cây, nhà mái ngói và cổng. Nút **Ra sân** đưa khách đến sân bằng vị trí do máy chủ xác nhận, trả đệm đang giữ và quay camera ra vườn. Khách cũng có thể đi qua cửa chính ra sân gạch, dạo hai bên chùa, đến hồ sen, chòi an tịnh và cổng tam quan. Có cây hoa hồng nhạt, tán cây phân lớp, hàng cây bụi, đồi xa, sân lát đá có dải dẫn đường, tiểu cảnh đá, hồ sen với gợn nước và chòi nghỉ có ghế gỗ/đèn treo; thanh đầu trang hiển thị khu vực hiện tại. Dùng WASD/phím mũi tên hoặc cụm nút trên điện thoại; kéo để xoay camera. Tường bên chính điện, hồ sen và bồn hoa có va chạm dùng chung trên trình duyệt và máy chủ. Muốn chọn đệm, quay lại chính điện qua cửa chính trước.
+Chính điện có ba tượng Phật tọa thiền (tượng giữa lớn hơn), rộng hơn bản đầu 40% theo chiều ngang và 35% theo chiều sâu; các đệm được giãn ra để có lối đi rộng. Kiến trúc có cột gỗ trên chân đá, mái dốc và xà, hoành phi tiếng Việt, hai bảng chữ, đèn treo, bàn lễ với hoa/quả/nến. Qua cửa nhìn ra sân gạch, đèn đá, hồ sen, cây, nhà mái ngói và cổng. Nút **Ra sân** đưa khách đến sân bằng vị trí do máy chủ xác nhận, trả đệm đang giữ và quay camera ra vườn. Khách cũng có thể đi qua cửa chính ra sân gạch, dạo hai bên chùa, đến hồ sen, chòi an tịnh và cổng tam quan. Cổng và chòi nghỉ có mái ngói cong với đường gờ, khóm trúc, cánh hoa bay nhẹ và họa tiết sen trên lối đi. Hồ sen có cá koi và vòi nước tre. Có cây hoa hồng nhạt, tán cây phân lớp, hàng cây bụi, đồi xa, sân lát đá có dải dẫn đường, tiểu cảnh đá, hồ sen với gợn nước và chòi nghỉ có ghế gỗ/đèn treo; thanh đầu trang hiển thị khu vực hiện tại. Dùng WASD/phím mũi tên hoặc cụm nút trên điện thoại; kéo để xoay camera. Tường bên chính điện, hồ sen và bồn hoa có va chạm dùng chung trên trình duyệt và máy chủ. Muốn chọn đệm, quay lại chính điện qua cửa chính trước.
 
 ## Điều khiển
 
@@ -89,6 +89,7 @@ Script tạo phòng test riêng, kiểm tra lễ nghi, hộp thoại, thiền, h
 - `src/world/Hall.tsx`: chính điện, ánh sáng và đệm tương tác.
 - `src/world/TempleDecor.tsx`: kiến trúc gỗ, bảng chữ và đồ lễ.
 - `src/world/TempleGarden.tsx`: sân gạch có thể đi dạo, cây cao, bồn hoa, hồ sen, đèn đá, chòi nghỉ, biển chỉ dẫn và cổng.
+- `src/world/GardenOrnaments.tsx`: mái ngói cong, khóm trúc dùng instancing, cánh hoa chuyển động và họa tiết sen trên mặt sân.
 - `src/world/GardenScenery.tsx`: cây hoa, cụm lá/hoa dùng instancing, hồ sen, gợn nước, ghế gỗ, tiểu cảnh đá, hàng cây và bầu trời chuyển sắc.
 - `src/world/navigation.mjs`: di chuyển và va chạm dùng chung giữa trình duyệt và máy chủ.
 - `src/world/Character.tsx`: nhân vật, chuỗi hạt, animation, nội suy chuyển động.
