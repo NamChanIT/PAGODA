@@ -3,7 +3,7 @@ import type { MutableRefObject } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { layout } from './types';
-import { gardenExitStep, moveOnGround } from './navigation.mjs';
+import { moveOnGround } from './navigation.mjs';
 import { Altar } from './Altar';
 import { DonationBox } from './DonationBox';
 import { Hall } from './Hall';
@@ -18,16 +18,13 @@ type Props = {
   direction: string; paused: boolean; cameraAngle: number; zoom: number;
   seat: Seat | null; onSeat: (seat: Seat) => void; onRelease: () => void;
   onAreaChange: (area: string) => void;
-  walkingOutside: boolean; onGardenArrival: () => void;
 };
-export function World({ incense, onBell, onIncense, onDonation, name, ritual, setRitual, peers, self, latest, correction, direction, paused, cameraAngle, zoom, seat, onSeat, onRelease, onAreaChange, walkingOutside, onGardenArrival }: Props) {
+export function World({ incense, onBell, onIncense, onDonation, name, ritual, setRitual, peers, self, latest, correction, direction, paused, cameraAngle, zoom, seat, onSeat, onRelease, onAreaChange }: Props) {
   const player = useRef<Player>({ id: 'local', name, x: 0, z: layout.spawn.centerZ, yaw: Math.PI, ritual });
   const keys = useRef(new Set<string>());
   const cameraPosition = useRef(new THREE.Vector3());
   const movingLastFrame = useRef(false);
   const lastArea = useRef('');
-  const exitRoute = useRef<{ stage: 'center' | 'exit'; centerZ: number } | null>(null);
-  useEffect(() => { if (!walkingOutside) exitRoute.current = null; }, [walkingOutside]);
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLElement && (e.target.closest('dialog') || e.target.isContentEditable || ['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName))) return;
@@ -64,14 +61,6 @@ export function World({ incense, onBell, onIncense, onDonation, name, ritual, se
       dz = vertical * Math.cos(cameraAngle) - horizontal * Math.sin(cameraAngle);
       if (!movingLastFrame.current) { onRelease(); if (!paused) setRitual('stand'); }
       p.ritual = 'stand';
-    } else if (!paused && walkingOutside) {
-      // Keep the route stage when delayed server corrections arrive; do not
-      // repeatedly send the visitor back to the centering waypoint.
-      const confirmed = self ? peers.find(peer => peer.id === self) ?? null : p;
-      const next = gardenExitStep(p, exitRoute.current, confirmed);
-      exitRoute.current = next.route;
-      dx = next.atGoal ? 0 : next.goal.x - p.x; dz = next.atGoal ? 0 : next.goal.z - p.z;
-      if (next.arrived) onGardenArrival();
     } else if (!paused && seat) {
       dx = seat.x - p.x; dz = seat.z - p.z;
       if (Math.hypot(dx, dz) < .08) {

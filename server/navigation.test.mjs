@@ -1,22 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { gardenExitStep, moveOnGround } from '../src/world/navigation.mjs';
+import { moveOnGround } from '../src/world/navigation.mjs';
 const layout = JSON.parse(readFileSync(new URL('../src/world/layout.json', import.meta.url)));
 const move = (from, to) => moveOnGround(from, to, layout.movement, layout.obstacles);
-
-test('exit route survives delayed corrections and completes only after server confirmation', () => {
-  let next = gardenExitStep({ x: 6, z: 17 }, null, { x: 6, z: 17 });
-  assert.deepEqual(next.goal, { x: 0, z: 15 });
-  next = gardenExitStep({ x: 0, z: 15 }, next.route, { x: 1, z: 15 });
-  assert.equal(next.route.stage, 'exit');
-  next = gardenExitStep({ x: .6, z: 16 }, next.route, { x: .6, z: 16 });
-  assert.deepEqual(next.goal, { x: 0, z: 23 }, 'Corrections must not restart the centering waypoint');
-  next = gardenExitStep({ x: 0, z: 23 }, next.route, { x: 0, z: 18 });
-  assert.equal(next.arrived, false, 'Do not stop while the server is still inside the hall');
-  assert.equal(gardenExitStep({ x: 0, z: 23 }, next.route, { x: 0, z: 23 }).arrived, true);
-  assert.equal(gardenExitStep({ x: 0, z: 23 }, next.route, null).arrived, false);
-});
 
 test('visitors can leave the hall, walk both garden loops and return through the entrance', () => {
   for (const side of [-1, 1]) {

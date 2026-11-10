@@ -78,6 +78,13 @@ const server = http.createServer(async (req, res) => {
     const requestTime = Date.now();
     if (requestTime - session.windowAt > 1000) { session.windowAt = requestTime; session.requests = 0; }
     if (++session.requests > 30) return reply(429, { error: 'Too many requests' });
+    if (url.pathname === '/api/garden') {
+      session.movementRevision = (session.movementRevision || 0) + 1;
+      Object.assign(session.player, { x: 0, z: 23, yaw: 0, ritual: 'stand', seatId: null });
+      session.seen = requestTime; session.movementAt = requestTime; session.budget = .5;
+      broadcast(session.room);
+      return reply(200, { player: session.player, revision: session.movementRevision });
+    }
     if (url.pathname === '/api/bell') {
       const effects = roomEffects.get(session.room);
       if (Date.now() - effects.bellAt < 4000) return reply(429, { error: 'Bell cooling down' });
@@ -100,6 +107,8 @@ const server = http.createServer(async (req, res) => {
     }
     if (url.pathname !== '/api/state') return reply(404, { error: 'Not found' });
     if (![body.x, body.z, body.yaw].every(Number.isFinite) || !rituals.has(body.ritual)) return reply(400, { error: 'Invalid state' });
+    // Ignore movement sent before a location change, even if it arrives later.
+    if ((body.revision ?? 0) !== (session.movementRevision || 0)) return reply(200, { player: session.player });
     const now = Date.now();
     session.budget = Math.min(.8, session.budget + (now - session.movementAt) / 1000 * 3.8);
     session.movementAt = now;

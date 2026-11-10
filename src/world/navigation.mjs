@@ -14,10 +14,3 @@ export function moveOnGround(from, target, bounds, obstacles) {
   return { x, z };
 }
 
-export function gardenExitStep(position, priorRoute, confirmed) {
-  const route = priorRoute ?? { stage: 'center', centerZ: Math.min(position.z, 15) };
-  if (route.stage === 'center' && Math.hypot(position.x, position.z - route.centerZ) < .15) route.stage = 'exit';
-  const goal = route.stage === 'center' ? { x: 0, z: route.centerZ } : { x: 0, z: 23 };
-  const atGoal = Math.hypot(position.x - goal.x, position.z - goal.z) < .08;
-  return { route, goal, atGoal, arrived: route.stage === 'exit' && atGoal && !!confirmed && Math.hypot(confirmed.x, confirmed.z - 23) < .3 };
-}

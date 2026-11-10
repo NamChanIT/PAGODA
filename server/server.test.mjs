@@ -162,6 +162,31 @@ test('server accepts walking through the entrance into the shared courtyard', { 
   assert.ok(Math.abs(player.x) < 7.3, 'Walk through the central doorway');
 }));
 
+test('garden transfer releases seats and ignores stale movement before allowing normal walking', { timeout: 10000 }, () => withServer(async ({ post, base }) => {
+  const a = await (await post('join', { room: 'garden-transfer' })).json();
+  const b = await (await post('join', { room: 'garden-transfer' })).json();
+  assert.equal((await post('garden', {}, 'invalid')).status, 401);
+  assert.equal((await post('seat', { seatId: 1 }, a.secret)).status, 200);
+  const transfer = await (await post('garden', {}, a.secret)).json();
+  assert.equal(transfer.player.x, 0); assert.equal(transfer.player.z, 23);
+  assert.equal(transfer.player.seatId, null); assert.equal(transfer.player.ritual, 'stand');
+  assert.equal((await post('seat', { seatId: 1 }, b.secret)).status, 200);
+  // This state was already in flight when the visitor clicked Ra sân.
+  const stale = await (await post('state', { ...a.player, revision: 0 }, a.secret)).json();
+  assert.equal(stale.player.z, 23);
+  const controller = new AbortController();
+  try {
+    const response = await fetch(`${base}/api/events?token=${b.secret}`, { signal: controller.signal });
+    const reader = response.body.getReader();
+    let frame = '';
+    while (!frame.includes('\n\n')) frame += new TextDecoder().decode((await reader.read()).value);
+    const snapshot = JSON.parse(frame.split('\n')[0].slice(6));
+    assert.equal(snapshot.find(player => player.id === a.id).z, 23);
+  } finally { controller.abort(); }
+  const moved = await (await post('state', { ...transfer.player, z: 23.1, revision: transfer.revision }, a.secret)).json();
+  assert.equal(moved.player.z, 23.1, 'Walking must work after the transfer');
+}));
+
 test('built website and API share a port without exposing source files', { timeout: 10000 }, () => withServer(async ({ base }) => {
   const response = await fetch(base);
   assert.equal(response.status, 200);

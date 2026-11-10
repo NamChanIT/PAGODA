@@ -35,6 +35,9 @@ export function useRoom(name: string, room: string) {
   const correction = useRef<Correction | null>(null);
   const seatId = useRef<number | null>(null);
   const generation = useRef(0);
+  const movementRevision = useRef(0);
+  const movementVersion = useRef(0);
+  const transferring = useRef(false);
   const seatQueue = useRef<Promise<unknown>>(Promise.resolve());
 
   useEffect(() => {
@@ -46,6 +49,7 @@ export function useRoom(name: string, room: string) {
     self.current = ''; token.current = ''; latest.current = null; correction.current = null; seatId.current = null;
     setPlayers([]); setConnected(false); setIncense(false); setBell(null); setStatus('Đang kết nối');
     generation.current++;
+    movementRevision.current = 0; movementVersion.current++;
     const reconnect = () => {
       if (disposed) return;
       source?.close(); source = undefined;
@@ -58,6 +62,7 @@ export function useRoom(name: string, room: string) {
         const data = await request('join', { name, room });
         if (disposed) { leave(data.secret); return; }
         self.current = data.id; token.current = data.secret;
+        movementRevision.current = 0; movementVersion.current++;
         correction.current = { x: data.player.x, z: data.player.z, reset: true };
         const secret = data.secret;
         source = new EventSource(`/api/events?token=${encodeURIComponent(secret)}`);
@@ -91,12 +96,13 @@ export function useRoom(name: string, room: string) {
     window.addEventListener('pagehide', onPageHide);
     void join();
     const timer = setInterval(async () => {
-      if (disposed || busy || !token.current || !latest.current) return;
+      if (disposed || busy || transferring.current || correction.current?.reset || !token.current || !latest.current) return;
       busy = true;
       const secret = token.current, sent = { ...latest.current };
+      const sentVersion = movementVersion.current;
       try {
-        const data = await request('state', sent, secret, controller.signal);
-        if (disposed || token.current !== secret) return;
+        const data = await request('state', { ...sent, revision: movementRevision.current }, secret, controller.signal);
+        if (disposed || token.current !== secret || sentVersion !== movementVersion.current) return;
         // Keep input made after this request while applying the server's correction.
         const prior = correction.current;
         if (!prior?.reset) correction.current = {
@@ -138,5 +144,20 @@ export function useRoom(name: string, room: string) {
     if (!token.current) { setIncense(active); return; }
     await request('incense', { active }, token.current);
   }, []);
-  return { players, status, connected, self, latest, correction, seatId, reserve, incense, bell, ringBell, changeIncense };
+  const goToGarden = useCallback(async () => {
+    if (transferring.current) return;
+    const secret = token.current, currentGeneration = generation.current;
+    if (!secret) throw new Error('Chưa kết nối máy chủ');
+    transferring.current = true; movementVersion.current++;
+    try {
+      await seatQueue.current.catch(() => {});
+      const data = await request('garden', {}, secret);
+      if (token.current !== secret || generation.current !== currentGeneration) throw new Error('Phòng đã thay đổi');
+      movementRevision.current = data.revision;
+      latest.current = data.player; seatId.current = null;
+      correction.current = { x: data.player.x, z: data.player.z, reset: true };
+      setPlayers(previous => previous.map(player => player.id === data.player.id ? data.player : player));
+    } finally { transferring.current = false; }
+  }, []);
+  return { players, status, connected, self, latest, correction, seatId, reserve, incense, bell, ringBell, changeIncense, goToGarden };
 }

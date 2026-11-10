@@ -36,7 +36,7 @@ Có thể đổi cổng bằng `PORT=4180 npm run play:lan`. `npm start` chạy 
 
 ## Không gian
 
-Chính điện có ba tượng Phật tọa thiền (tượng giữa lớn hơn), rộng hơn bản đầu 40% theo chiều ngang và 35% theo chiều sâu; các đệm được giãn ra để có lối đi rộng. Kiến trúc có cột gỗ trên chân đá, mái dốc và xà, hoành phi tiếng Việt, hai bảng chữ, đèn treo, bàn lễ với hoa/quả/nến. Qua cửa nhìn ra sân gạch, đèn đá, hồ sen, cây, nhà mái ngói và cổng. Khách có thể đi qua cửa chính ra sân gạch, dạo hai bên chùa, đến hồ sen, chòi an tịnh và cổng tam quan. Có bồn hoa, cây cao, đèn đá và biển chỉ dẫn; thanh đầu trang hiển thị khu vực hiện tại. Dùng WASD/phím mũi tên hoặc cụm nút trên điện thoại; kéo để xoay camera. Tường bên chính điện, hồ sen và bồn hoa có va chạm dùng chung trên trình duyệt và máy chủ. Muốn chọn đệm, quay lại chính điện qua cửa chính trước.
+Chính điện có ba tượng Phật tọa thiền (tượng giữa lớn hơn), rộng hơn bản đầu 40% theo chiều ngang và 35% theo chiều sâu; các đệm được giãn ra để có lối đi rộng. Kiến trúc có cột gỗ trên chân đá, mái dốc và xà, hoành phi tiếng Việt, hai bảng chữ, đèn treo, bàn lễ với hoa/quả/nến. Qua cửa nhìn ra sân gạch, đèn đá, hồ sen, cây, nhà mái ngói và cổng. Nút **Ra sân** đưa khách đến sân bằng vị trí do máy chủ xác nhận, trả đệm đang giữ và quay camera ra vườn. Khách cũng có thể đi qua cửa chính ra sân gạch, dạo hai bên chùa, đến hồ sen, chòi an tịnh và cổng tam quan. Có bồn hoa, cây cao, đèn đá và biển chỉ dẫn; thanh đầu trang hiển thị khu vực hiện tại. Dùng WASD/phím mũi tên hoặc cụm nút trên điện thoại; kéo để xoay camera. Tường bên chính điện, hồ sen và bồn hoa có va chạm dùng chung trên trình duyệt và máy chủ. Muốn chọn đệm, quay lại chính điện qua cửa chính trước.
 
 ## Điều khiển
 

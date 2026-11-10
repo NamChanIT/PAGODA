@@ -63,7 +63,7 @@ function App({ initialName }: { initialName: string }) {
   const [direction, setDirection] = useState('');
   const [angle, setAngle] = useState(0); const [zoom, setZoom] = useState(layout.camera.zoom);
   const [seat, setSeat] = useState<Seat | null>(null);
-  const [walkingOutside, setWalkingOutside] = useState(false);
+  const [gardenBusy, setGardenBusy] = useState(false);
   const [settings, setSettings] = useState(false); const [people, setPeople] = useState(false);
   const [donation, setDonation] = useState(false);
   const openDonation = () => { setDirection(''); setDonation(true); };
@@ -86,12 +86,10 @@ function App({ initialName }: { initialName: string }) {
   };
   const meditation = useMeditation(() => { sound.playChime(); notify('Đã hoàn thành thời thiền. Cảm ơn bạn đã dành thời gian cho mình.'); });
   const releaseSeat = () => {
-    setWalkingOutside(false);
     seatRequest.current++; setSeatBusy(false); setSeat(null);
     if (seatBusy || network.seatId.current !== null) void network.reserve(null).catch(() => notify('Chưa thể trả đệm. Hệ thống sẽ trả chỗ khi phiên kết thúc.'));
   };
   const chooseSeat = async (chosen: Seat) => {
-    setWalkingOutside(false);
     if (area !== 'Chính điện') { notify('Bạn hãy quay lại chính điện qua cửa chính để chọn đệm.'); return; }
     if (seatBusy) return;
     const requestId = ++seatRequest.current; setSeatBusy(true);
@@ -164,9 +162,8 @@ function App({ initialName }: { initialName: string }) {
         camera={{ position: [0, 3.58, 17], fov: 66 }} fallback={<div className="fallback">Trình duyệt cần hỗ trợ WebGL.</div>}>
         <World incense={network.incense} onBell={ringBell} onIncense={toggleIncense} onDonation={openDonation} name={name} ritual={ritual} setRitual={setRitual} peers={network.players} self={network.self.current}
           latest={network.latest} correction={network.correction} direction={direction}
-          paused={settings || donation || meditation.active} cameraAngle={angle} zoom={zoom} seat={seat}
-          onSeat={chooseSeat} onRelease={releaseSeat} onAreaChange={setArea}
-          walkingOutside={walkingOutside} onGardenArrival={() => { setWalkingOutside(false); notify('Bạn đã ra sân. Dùng phím di chuyển để dạo vườn.'); }}/>
+          paused={settings || donation || gardenBusy || meditation.active} cameraAngle={angle} zoom={zoom} seat={seat}
+          onSeat={chooseSeat} onRelease={releaseSeat} onAreaChange={setArea}/>
       </Canvas></Boundary>
     </div>
     <header className="hall-header">
@@ -206,11 +203,14 @@ function App({ initialName }: { initialName: string }) {
     {notice && <div className="hall-notice glass" role="status">{notice}</div>}
     <aside className="hall-guide"><span>KHÔNG GIAN TĨNH TÂM</span><h1>Trở về với<br/>bình yên.</h1><p>{area === 'Chính điện' ? 'Qua cửa chính để dạo sân vườn.' : 'Dạo bước bên hồ sen và chòi nghỉ.'}<br/>W A S D / ↑ ↓ ← → để di chuyển.<br/>Kéo để xoay · Cuộn để thu phóng.</p></aside>
     <div className="temple-tools glass" aria-label="Tương tác chính điện">
-      {area === 'Chính điện' && <button aria-label={walkingOutside ? 'Dừng đi ra sân' : 'Ra sân vườn'} onClick={() => {
-        if (walkingOutside) { setWalkingOutside(false); return; }
-        releaseSeat(); meditation.stop(); setDirection(''); setRitual('stand'); setWalkingOutside(true);
-        notify('Đang đi ra sân qua cửa chính. Dùng phím di chuyển để hủy.');
-      }}><Footprints size={17}/><span>{walkingOutside ? 'Dừng lại' : 'Ra sân'}</span></button>}
+      {area === 'Chính điện' && <button aria-label="Ra sân vườn" disabled={gardenBusy} onClick={async () => {
+        if (gardenBusy) return;
+        meditation.stop(); setDirection(''); setRitual('stand'); setGardenBusy(true);
+        seatRequest.current++; setSeatBusy(false); setSeat(null);
+        try { await network.goToGarden(); setAngle(Math.PI); notify('Bạn đã ra sân. Dùng phím di chuyển để dạo vườn.'); }
+        catch { notify('Chưa thể ra sân. Kiểm tra kết nối rồi bấm Ra sân để thử lại.'); }
+        finally { setGardenBusy(false); }
+      }}><Footprints size={17}/><span>{gardenBusy ? 'Đang ra sân…' : 'Ra sân'}</span></button>}
       <button aria-label="Mở hòm công đức" onClick={openDonation}><Hand size={17}/><span>Công đức</span></button>
       <button aria-label="Chọn đệm ngồi" aria-expanded={showSeats} onClick={() => { setShowSeats(!showSeats); setPeople(false); }}><Grid2X2 size={17}/><span>Chọn đệm</span></button>
       <button aria-label="Thỉnh chuông" disabled={bellBusy} onClick={ringBell}><Bell size={17}/><span>Thỉnh chuông</span></button>
@@ -227,7 +227,7 @@ function App({ initialName }: { initialName: string }) {
         <small>{meditation.history.length ? `${meditation.history.length} thời thiền đã hoàn thành trên thiết bị này` : 'Chọn thời lượng để bắt đầu'}</small>
       </>}
     </section>
-    <div className="movement-pad" aria-label="Điều khiển di chuyển">{['w','a','s','d'].map((key, i) => <button key={key} disabled={settings || donation || meditation.active}
+    <div className="movement-pad" aria-label="Điều khiển di chuyển">{['w','a','s','d'].map((key, i) => <button key={key} disabled={settings || donation || gardenBusy || meditation.active}
       aria-label={['Đi tới','Sang trái','Đi lùi','Sang phải'][i]}
       onPointerDown={event => { event.currentTarget.setPointerCapture(event.pointerId); setDirection(key); }}
       onPointerUp={() => setDirection('')} onPointerCancel={() => setDirection('')} onLostPointerCapture={() => setDirection('')}>{['↑','←','↓','→'][i]}</button>)}</div>
