@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import * as THREE from 'three';
 import { TempleDecor } from './TempleDecor';
 import { TempleGarden } from './TempleGarden';
+import { GardenSky } from './GardenScenery';
 import { BuddhaStatue } from './BuddhaStatue';
 import { seats, layout } from './types';
 import type { Seat } from './types';
@@ -23,9 +24,10 @@ export function Hall({ onSeat, occupied, selected }: { onSeat: (seat: Seat) => v
   useEffect(() => () => timber.dispose(), [timber]);
   return <>
     <group scale={layout.architectureScale as [number, number, number]}><TempleGarden/><TempleDecor/></group>
-    <color attach="background" args={['#c5c7af']}/><fog attach="fog" args={['#c5c7af', 45, 110]}/>
+    <GardenSky/>
+    <color attach="background" args={['#e2e3d1']}/><fog attach="fog" args={['#e2e3d1', 55, 135]}/>
     <ambientLight intensity={.65}/><hemisphereLight args={['#f5e7c7', '#292325', 1.5]}/>
-    <directionalLight position={[10, 13, 5]} intensity={2.4} castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-20} shadow-camera-right={20} shadow-camera-top={20} shadow-camera-bottom={-20}/>
+    <directionalLight position={[-25, 35, 18]} color="#fff0d0" intensity={2.4} castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-52} shadow-camera-right={52} shadow-camera-top={52} shadow-camera-bottom={-52} shadow-camera-far={120} shadow-bias={-.0003} shadow-normalBias={.04}/>
     <pointLight position={[0, 8, -10]} color="#ffd18a" intensity={65} distance={24}/>
     <pointLight position={[0, 5.7, -3.5]} color="#fff1d6" intensity={45} distance={24}/>
     <group scale={layout.architectureScale as [number, number, number]}>
